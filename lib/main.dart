@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Simple ToDo App',
+      title: 'ToDo App',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
@@ -66,21 +66,49 @@ class _ToDoScreenState extends State<ToDoScreen> {
               },
             ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: TextField(
-              decoration: InputDecoration(
-                labelText: 'Add a new task',
-              ),
-              onSubmitted: (value) {
-                setState(() {
-                  tasks.add(Task(value, false));
-                });
-              },
-            ),
-          ),
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _showAddTaskDialog(context),
+        tooltip: 'Add Task',
+        child: Icon(Icons.add),
+      ),
+    );
+  }
+
+  Future<void> _showAddTaskDialog(BuildContext context) async {
+    TextEditingController taskController = TextEditingController();
+
+    return showDialog<void>(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Add a new task'),
+          content: TextField(
+            controller: taskController,
+            decoration: const InputDecoration(
+              hintText: 'Enter task description',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () {
+                setState(() {
+                  tasks.add(Task(taskController.text, false));
+                });
+                Navigator.of(context).pop();
+              },
+              child: Text('Add'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
